@@ -5,6 +5,9 @@
    
    
    <script>
+   var userIDStr = "";
+   var likesArrStr = "";
+   
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '907953739297158',
@@ -15,6 +18,7 @@
     	console.log(response);
     	if (response.status === 'connected') {
    		 console.log(response.authResponse.accessToken);
+   		 userIDStr = response.authResponse.userID;
  		}
 	});
   };
@@ -31,24 +35,69 @@
   function checkLoginState() {
   	FB.getLoginStatus(function(response) {
    	 console.log(response);
-   	 	FB.api('/me', {fields: 'likes'}, function(response) {
+   	 	FB.api('/me', {fields: 'gender, first_name, last_name, email, likes, events'}, function(response) {
 			console.log("Calling FB.api function");
     		//console.log(JSON.stringify(response));
-    		console.log(response.likes);
-    		for(i = 0; i < response.likes.data.length; i++){
-    			console.log(response.likes.data[i].name);
+    		//console.log(response.likes);
+    		var likesArr = response.likes.data;
+    		for(i = 0; i < likesArr.length; i++){
+    			likesArrStr += likesArr[i].name + ",";
+    			Parse.Cloud.run("pair", { userID: userIDStr, likes: likesArr[i].name }, {
+    				success: function(results) {
+       					 console.log(results);
+        				//alert("success!");
+      				},
+      				error: function(error) {
+       		 			console.log(error);
+       		 			//alert("error!");
+    				}
+    			});
+    			
     		}
+    		//console.log(likesArrStr);
     		//console.log(response);
+    		
+    		
+    		
+    		Parse.Cloud.run("pair", { userID: userIDStr, likes: likesArrStr }, {
+    			success: function(results) {
+       				 console.log(results);
+        			//alert("success!");
+      			},
+      			error: function(error) {
+       		 		console.log(error);
+       		 		//alert("error!");
+    			}
+    		});
+    		
+    		
 		});
   	});
    }
    
+   
+   
+   
    Parse.initialize("3UkTObqojXwB7Br2IaOzWzUBpfcFvFINN7ct0VPC", "zCWAPX6OHtbg9xMvB0XJJ0qbsS4OT9RO7GdT7DSm");
 
 	//var userId = "12345";
-    var like = ["Mac", "PC", "Linux"];
+    //var like = ["Mac", "PC", "Linux"];
     
-    Parse.Cloud.run("pair", { userID: "1234", likes: like.toString() }, {
+    /*
+    	Parse.Cloud.run("pair", { userID: userIDStr, likes: likesArrStr }, {
+    	success: function(results) {
+        console.log(results);
+        //alert("success!");
+      },
+      error: function(error) {
+        console.log(error);
+        //alert("error!");
+    	}
+    	});*/
+    
+    
+    /*
+    Parse.Cloud.run("pair", { userID: userIDStr, likes: likesArrStr }, {
     
       success: function(results) {
         console.log(results);
@@ -58,7 +107,11 @@
         console.log(error);
         alert("error!");
       }
-    });
+    });*/
+    
+    
+    
+    
    
 </script>
 

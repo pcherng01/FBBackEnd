@@ -8,18 +8,15 @@ Parse.Cloud.define("hello", function(request, response) {
 
 // Other
 Parse.Cloud.define("pair", function(request, response) {
-
-	var Users= Parse.Object.extend("Users");
-	var user = new Users();
+ 	
+		
+		var Users= Parse.Object.extend("Users");
+		var user = new Users();
 	
-	var outStr = request.params.userID + request.params.likes;
-	//console.log(request.params.userID);
-	//console.log(request.params.like);
-	
-	user.set("userId",request.params.userID);
-	user.set("likes", request.params.likes);
-	
-	user.save(null, {
+		user.set("userId",request.params.userID);
+		user.set("likes", request.params.likes);
+		
+		user.save(null, {
 		success: function(gameScore) {
 		response.success("calling pair successfully");
 		alert('New object created with objectId: ' + gameScore.id);
@@ -28,6 +25,8 @@ Parse.Cloud.define("pair", function(request, response) {
 			alert('failed to created new object ' + error.message);
 		}
 		});
+	
+	
 /*
 	var likeQuery = new Parse.Query(LikeData);
 	var eventQuery = new Parse.Query(Events);
